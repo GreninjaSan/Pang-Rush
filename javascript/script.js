@@ -48,6 +48,9 @@ function update() {
         Perso1.body.velocity.x -= 0.08 * vitesse
         Perso1.play('marche_g');
     }
+    //else if(){
+    //
+    //}
     if (J1.bas.isDown) {
         Perso1.body.velocity.y = vitesse
     }
