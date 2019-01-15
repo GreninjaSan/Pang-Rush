@@ -6,7 +6,7 @@ var cursors;
 var J1;
 var vitesse = 300;
 function preload(){ 
-    game.load.image('pangolin-vie','asset/pangolin-vie.png'); 
+    game.load.spritesheet('J1_spr', 'asset/Sprites Joueur1.png', 39, 38);
 } 
 
 function create() {
@@ -20,28 +20,34 @@ function create() {
     cursors = game.input.keyboard.createCursorKeys();
 
     //assignement des sprites
-    monSprite = game.add.sprite(0, 200, 'pangolin-vie');
+    Perso1 = game.add.sprite(0, 200, 'J1_spr');
+    Perso1.anchor.setTo(0.5, 0.5);
+    Perso1.animations.add('marche', [1,3], 5, true);
+    
 
     //allocation du moteur de jeu
-    game.physics.enable(monSprite, Phaser.Physics.ARCADE);
-    monSprite.body.collideWorldBounds = true;
-    //monSprite.body.bounce.y = 0.8;
+    game.physics.enable(Perso1, Phaser.Physics.ARCADE);
+    Perso1.body.collideWorldBounds = true;
+    //Perso1.body.bounce.y = 0.8;
 
 } 
 
-function update() { 
-    monSprite.body.velocity.x *= 0.90;
+function update() {
+    Perso1.body.velocity.x *= 0.90;
     //mouvements
     if (J1.gauche.isDown) {
-        monSprite.body.velocity.x = -vitesse
+        Perso1.body.velocity.x -= 0.08 * vitesse
+
     } 
     if (J1.droite.isDown) {
-        monSprite.body.velocity.x = vitesse
+        Perso1.body.velocity.x += 0.08 * vitesse
+        Perso1.play('marche');
     }
     if (J1.bas.isDown) {
-        monSprite.body.velocity.y = vitesse
+        Perso1.body.velocity.y = vitesse
     }
-    if (J1.haut.isDown && monSprite.body.velocity.y <= 10 && monSprite.body.velocity.y >= -10) {
-        monSprite.body.velocity.y = -1.5*vitesse
+    if (J1.haut.isDown && Perso1.body.velocity.y <= 10 && Perso1.body.velocity.y >= -10) {
+        Perso1.body.velocity.y = -1.3*vitesse
     }
+
 }
