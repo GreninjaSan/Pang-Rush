@@ -4,11 +4,13 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'content', {
 }); 
 var cursors;
 var J1;
+var J2;
 var vitesse = 300;
 var test_desc;
 var aerial;
 function preload(){ 
     game.load.spritesheet('J1_spr', 'asset/Sprites Joueur1.png', 78, 76);
+    game.load.spritesheet('J2_spr', 'asset/Sprites Joueur2.png', 78, 76);
 } 
 
 function create() {
@@ -28,36 +30,50 @@ function create() {
     Perso1.animations.add('marche_g', [0, 2], 5, true);
     Perso1.animations.add('acc_g', [8], 5, true);
     Perso1.animations.add('acc_d', [9], 5, true);
+    Perso1.animations.add('still_d', [7], 5, true);
+    Perso1.animations.add('still_g', [6], 5, true);
+
+    Perso2 = game.add.sprite(0, 200, 'J2_spr');
+    Perso2.anchor.setTo(0.5, 0.5);
+    Perso2.animations.add('marche_d', [1, 3], 5, true);
+    Perso2.animations.add('marche_g', [0, 2], 5, true);
+    Perso2.animations.add('acc_g', [8], 5, true);
+    Perso2.animations.add('acc_d', [9], 5, true);
+    Perso2.animations.add('still_d', [7], 5, true);
+    Perso2.animations.add('still_g', [6], 5, true);
 
     //allocation du moteur de jeu
     game.physics.enable(Perso1, Phaser.Physics.ARCADE);
     Perso1.body.collideWorldBounds = true;
-    //Perso1.body.bounce.y = 0.8;
 
+    game.physics.enable(Perso2, Phaser.Physics.ARCADE);
+    Perso2.body.collideWorldBounds = true;
 } 
 
 function update() {
-    Perso1.body.velocity.x *= 0.90;
     //mouvements
 
-    if (J1.droite.isDown) {
-        Perso1.body.velocity.x += 0.08 * vitesse
-        Perso1.play('marche_d');
-    }
-    else if (J1.gauche.isDown) {
-        Perso1.body.velocity.x -= 0.08 * vitesse
-        Perso1.play('marche_g');
-    }
-    //else if(){
-    //
-    //}
-    if (J1.bas.isDown) {
-        Perso1.body.velocity.y = vitesse
-    }
-    if (J1.haut.isDown && Perso1.body.velocity.y <= 10 && Perso1.body.velocity.y >= -10) {
-        Perso1.body.velocity.y = -1.3*vitesse
-    }
+    function move(Perso, joueur) {
+        Perso.body.velocity.x *= 0.90;
+        if (joueur.droite.isDown) {
+            Perso.body.velocity.x += 0.08 * vitesse
+            Perso.play('marche_d');
+        }
+        else if (joueur.gauche.isDown) {
+            Perso.body.velocity.x -= 0.08 * vitesse
+            Perso.play('marche_g');
+        }
+        else if (Perso.body.velocity.x) {
 
-
+        }
+        if (joueur.bas.isDown) {
+            Perso.body.velocity.y = vitesse
+        }
+        if (joueur.haut.isDown && Perso.body.velocity.y <= 10 && Perso.body.velocity.y >= -10) {
+            Perso.body.velocity.y = -1.3 * vitesse
+        }
+    }
+    move(Perso1, J1);
+    move(Perso2, J2);
     //if (Perso1.body.velocity.y < 10)
 }
