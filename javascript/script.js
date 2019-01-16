@@ -7,7 +7,9 @@ var J1;
 var J2;
 var vitesse = 300;
 var test_desc;
-var aerial;
+var aerial1;
+var aerial2;
+
 function preload(){ 
     game.load.spritesheet('J1_spr', 'asset/Sprites Joueur1.png', 78, 76);
     game.load.spritesheet('J2_spr', 'asset/Sprites Joueur2.png', 78, 76);
@@ -71,6 +73,9 @@ function update() {
         }
         if (joueur.haut.isDown && Perso.body.velocity.y <= 10 && Perso.body.velocity.y >= -10) {
             Perso.body.velocity.y = -1.3 * vitesse
+        }
+        if (Perso.body.velocity.y < 0) {
+
         }
     }
     move(Perso1, J1);
