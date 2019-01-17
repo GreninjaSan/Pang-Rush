@@ -51,7 +51,8 @@ function preload(){
 
 function create() {
     groupe_sol = game.add.group();
-    boules_de_feu = game.add.group();
+    virevoltants = game.add.group();
+
 
     //layer 1
     for (var i = 0; i < 1000; i++) {
@@ -187,5 +188,14 @@ function update() {
         game.camera.x = Perso2.body.x - 700
         cam_memory = game.camera.x;
     }
-    
+
+    //condition de victoire par dépassement
+    if (Perso1.body.x > Perso2.body.x + 730) {
+        //joueur 1 gagne
+        document.location.href = 'commandes.html'
+    }
+    if (Perso2.body.x > Perso1.body.x + 730) {
+        //joueur 2 gagne
+        document.location.href = 'commandes.html'
+    }
 }
