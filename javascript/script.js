@@ -22,9 +22,15 @@ function preload(){
     game.load.image('pics', 'asset/Obstacle-pics.png');
     game.load.image('virevoltant', 'asset/Obstacle-Virevoltant.png');
     game.load.spritesheet('background', 'asset/Fond-course.png',1024,768);
+    game.load.audio('raceTheme', 'asset/Music/true_race_theme.ogg')
 } 
 
 function create() {
+    //mise en route de la musique
+    music = game.add.audio('raceTheme');
+    music.loop = true;
+    music.play();
+
     //animation de fond
     fond = game.add.sprite(0, 0, "background");
     fond.animations.add("basic", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], 0.1, true);
