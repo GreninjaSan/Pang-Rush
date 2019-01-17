@@ -1,4 +1,4 @@
-sol = function (index, game, player, x,y) {
+sol = function (index, game, x,y) {
 
     var x = x;
     var y = y;
@@ -35,7 +35,6 @@ var vitesse = 300;
 var test_desc;
 var aerial1 = 2;
 var aerial2 = 2;
-var sol;
 
 function preload(){ 
     game.load.spritesheet('J1_spr', 'asset/Sprites Joueur1.png', 78, 76);
@@ -44,14 +43,38 @@ function preload(){
 } 
 
 function create() {
-    /*sol = game.add.sprite(-300, -300);
-    sol.anchor.setTo(0.5, 0.5);
-    for (var i = 0; i < 80; i++) 
-    {
-        enemies.push(new sol(i, game, tank, 106*i,946));
-    }*/
+    groupe_sol = game.add.group();
 
 
+    //layer 1
+    for (var i = 0; i < 1000; i++) {
+        if (Math.random() * 100 > 10) {
+            s = groupe_sol.create(106 * i, 700, 'sol');
+            game.physics.enable(s, Phaser.Physics.ARCADE);
+            s.body.immovable = true;
+            s.body.allowGravity = false;
+        }
+    }
+
+    //layer 2
+    for (var i = 0; i < 1000; i++) {
+        if (Math.random() * 100 > 70) {
+            s = groupe_sol.create(106 * i, 500, 'sol');
+            game.physics.enable(s, Phaser.Physics.ARCADE);
+            s.body.immovable = true;
+            s.body.allowGravity = false;
+        }
+    }
+
+    //layer 3
+    for (var i = 0; i < 1000; i++) {
+        if (Math.random() * 100 > 90) {
+            s = groupe_sol.create(106 * i, 300, 'sol');
+            game.physics.enable(s, Phaser.Physics.ARCADE);
+            s.body.immovable = true;
+            s.body.allowGravity = false;
+        }
+    }
 
     game.world.setBounds(0, 0, 40000, 768);
     game.world.resize(3000, 768);
@@ -108,6 +131,9 @@ function update() {
     game.physics.arcade.collide(Perso1, Perso2)
     game.physics.arcade.collide(Perso1, bloc)
     game.physics.arcade.collide(bloc, Perso2)
+
+    game.physics.arcade.collide(groupe_sol, Perso2)
+    game.physics.arcade.collide(groupe_sol, Perso1)
 
     function move(Perso, joueur, aerial, ae = 1, t1 = 0, t2 = 0) {
         
