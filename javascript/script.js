@@ -1,29 +1,3 @@
-sol = function (index, game, x,y) {
-
-    var x = x;
-    var y = y;
-
-    this.game = game;
-
-    this.sol = game.add.sprite(x, y, 'plateforme', 'sol');
-    this.sol.anchor.set(0.5);
-
-    this.sol.name = index.toString();
-    game.physics.enable(this.sol, Phaser.Physics.ARCADE);
-    this.sol.body.immovable = false;
-    this.sol.body.immovable=true
-    game.physics.arcade.collide(this.sol, Perso1)
-    game.physics.arcade.collide(this.sol, Perso2)
-    
-
-};
-
-
-
-
-
-
-
 var game = new Phaser.Game(1024, 768, Phaser.AUTO, 'content', {
     preload: preload, create: 
         create, update: update
@@ -47,16 +21,25 @@ function preload(){
     game.load.image('potion_speed', 'asset/Objet-PotionSpeed.png');
     game.load.image('pics', 'asset/Obstacle-pics.png');
     game.load.image('virevoltant', 'asset/Obstacle-Virevoltant.png');
+    game.load.spritesheet('background', 'asset/Fond-course.png',1024,768);
 } 
 
 function create() {
+    //animation de fond
+    fond = game.add.sprite(0, 0, "background");
+    fond.animations.add("basic", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], 0.1, true);
+
+    //creation des groupes
     groupe_sol = game.add.group();
-    virevoltants = game.add.group();
+    groupe_virevoltants = game.add.group();
+    groupe_caisses = game.add.group();
+    groupe_pics = game.add.group();
 
-
+    //creation du monde
+    {
     //layer 1
     for (var i = 0; i < 1000; i++) {
-        if (Math.random() * 100 > 10) {
+        if (Math.random() * 100 < 60) {
             s = groupe_sol.create(106 * i, 700, 'sol');
             game.physics.enable(s, Phaser.Physics.ARCADE);
             s.body.immovable = true;
@@ -66,7 +49,7 @@ function create() {
 
     //layer 2
     for (var i = 0; i < 1000; i++) {
-        if (Math.random() * 100 > 70) {
+        if (Math.random() * 100 < 10) {
             s = groupe_sol.create(106 * i, 540, 'plateforme');
             game.physics.enable(s, Phaser.Physics.ARCADE);
             s.body.immovable = true;
@@ -76,48 +59,56 @@ function create() {
 
     //layer 3
     for (var i = 0; i < 1000; i++) {
-        if (Math.random() * 100 > 90) {
+        if (Math.random() * 100 < 4) {
             s = groupe_sol.create(106 * i, 380, 'plateforme');
+            /*
+            if (Math.random() * 100 <) {
+                g=groupe_pics = 
+            }
+            */
             game.physics.enable(s, Phaser.Physics.ARCADE);
             s.body.immovable = true;
             s.body.allowGravity = false;
         }
     }
+    }
+
 
     game.world.setBounds(0, 0, 40000, 768);
     game.world.resize(3000, 768);
-
-    //initialisation du fond
-    game.stage.backgroundColor = '#FFF000';
 
     //initialisation des moteurs de jeu
     game.physics.startSystem(Phaser.Physics.ARCADE);
     game.physics.arcade.gravity.y = 700;
 
     //assignement des touches
-    J1 = game.input.keyboard.addKeys({ 'haut': Phaser.KeyCode.Z, 'bas': Phaser.KeyCode.S, 'gauche': Phaser.KeyCode.Q, 'droite': Phaser.KeyCode.D, 'A': Phaser.KeyCode.I, 'B': Phaser.KeyCode.O, 'C': Phaser.KeyCode.P });
-    J2 = game.input.keyboard.addKeys({ 'haut': Phaser.KeyCode.UP, 'bas': Phaser.KeyCode.DOWN, 'gauche': Phaser.KeyCode.LEFT, 'droite': Phaser.KeyCode.RIGHT, 'A': Phaser.KeyCode.NUMPAD_1, 'B': Phaser.KeyCode.NUMPAD_2, 'C': Phaser.KeyCode.NUMPAD_3 });
-    cursors = game.input.keyboard.createCursorKeys();
+    {
+        J1 = game.input.keyboard.addKeys({ 'haut': Phaser.KeyCode.Z, 'bas': Phaser.KeyCode.S, 'gauche': Phaser.KeyCode.Q, 'droite': Phaser.KeyCode.D, 'A': Phaser.KeyCode.I, 'B': Phaser.KeyCode.O, 'C': Phaser.KeyCode.P });
+        J2 = game.input.keyboard.addKeys({ 'haut': Phaser.KeyCode.UP, 'bas': Phaser.KeyCode.DOWN, 'gauche': Phaser.KeyCode.LEFT, 'droite': Phaser.KeyCode.RIGHT, 'A': Phaser.KeyCode.NUMPAD_1, 'B': Phaser.KeyCode.NUMPAD_2, 'C': Phaser.KeyCode.NUMPAD_3 });
+        cursors = game.input.keyboard.createCursorKeys();
+    }
 
-    //assignement des sprites
-    Perso1 = game.add.sprite(200, 100, 'J1_spr');
-    Perso1.anchor.setTo(0.5, 0.5);
-    Perso1.animations.add('marche_d', [1,3], 5, true);
-    Perso1.animations.add('marche_g', [0, 2], 5, true);
-    Perso1.animations.add('acc_g', [8], 5, true);
-    Perso1.animations.add('acc_d', [9], 5, true);
-    Perso1.animations.add('still_d', [7], 5, true);
-    Perso1.animations.add('still_g', [6], 5, true);
     
-    Perso2 = game.add.sprite(200, 200, 'J2_spr');
-    Perso2.anchor.setTo(0.5, 0.5);
-    Perso2.animations.add('marche_d', [1, 3], 5, true);
-    Perso2.animations.add('marche_g', [0, 2], 5, true);
-    Perso2.animations.add('acc_g', [8], 5, true);
-    Perso2.animations.add('acc_d', [9], 5, true);
-    Perso2.animations.add('still_d', [7], 5, true);
-    Perso2.animations.add('still_g', [6], 5, true);
+    //assignement des sprites et des emplacements (des #persos)
+    {
+        Perso1 = game.add.sprite(1200, 100, 'J1_spr');
+        Perso1.anchor.setTo(0.5, 0.5);
+        Perso1.animations.add('marche_d', [1, 3], 5, true);
+        Perso1.animations.add('marche_g', [0, 2], 5, true);
+        Perso1.animations.add('acc_g', [8], 5, true);
+        Perso1.animations.add('acc_d', [9], 5, true);
+        Perso1.animations.add('still_d', [7], 5, true);
+        Perso1.animations.add('still_g', [6], 5, true);
 
+        Perso2 = game.add.sprite(1200, 200, 'J2_spr');
+        Perso2.anchor.setTo(0.5, 0.5);
+        Perso2.animations.add('marche_d', [1, 3], 5, true);
+        Perso2.animations.add('marche_g', [0, 2], 5, true);
+        Perso2.animations.add('acc_g', [8], 5, true);
+        Perso2.animations.add('acc_d', [9], 5, true);
+        Perso2.animations.add('still_d', [7], 5, true);
+        Perso2.animations.add('still_g', [6], 5, true);
+    }
 
     //allocation du moteur de jeu
     game.physics.enable(Perso1, Phaser.Physics.ARCADE);
@@ -132,6 +123,10 @@ function create() {
 } 
 
 function update() {
+    //fond.x = game.camera.x
+    
+    fond.play('basic');
+    
     //mouvements
     game.physics.arcade.collide(Perso1, Perso2)
 
@@ -184,15 +179,14 @@ function update() {
 
     //gestion de caméra
 
-    cam_memory += 4
 
     if (Perso1.body.x > Perso2.body.x) {
         game.camera.x = Perso1.body.x - 700
-            cam_memory = game.camera.x;
+        fond.x = Perso1.body.x - 700
     }
     else {
         game.camera.x = Perso2.body.x - 700
-        cam_memory = game.camera.x;
+        fond.x = Perso2.body.x - 700
     }
 
     //condition de victoire par depassement
