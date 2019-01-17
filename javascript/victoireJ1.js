@@ -5,10 +5,14 @@ var game = new Phaser.Game(1024, 768, Phaser.AUTO, 'content', {
 
 function preload(){ 
     game.load.image('victoireJ1', 'asset/Victoire-J1.png', 1024, 768);
+    game.load.audio('endTheme', 'asset/Music/end_theme.ogg');
 }
 
 function create(){
     victoireJ1 = game.add.sprite(0,0,'victoireJ1');
+    music = game.add.audio('endTheme');
+    music.loop = true;
+    music.play();
 }
 
 function update(){

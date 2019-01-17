@@ -5,10 +5,14 @@ var game = new Phaser.Game(1024, 768, Phaser.AUTO, 'content', {
 
 function preload(){ 
     game.load.image('commandes', 'asset/commandes.png', 1024, 768);
+    game.load.audio('menuTheme', 'asset/Music/menu_theme.ogg');
 }
 
 function create(){
-    test = game.add.sprite(0,0,'commandes');
+    commandes = game.add.sprite(0,0,'commandes');
+    music = game.add.audio('menuTheme');
+    music.loop = true;
+    music.play();
 }
 
 function update(){
