@@ -1,4 +1,30 @@
-var game = new Phaser.Game(800, 600, Phaser.AUTO, 'content', {
+sol = function (index, game, player, x,y) {
+
+    var x = x;
+    var y = y;
+
+    this.game = game;
+
+    this.sol = game.add.sprite(x, y, 'plateforme', 'sol');
+    this.sol.anchor.set(0.5);
+
+    this.sol.name = index.toString();
+    game.physics.enable(this.sol, Phaser.Physics.ARCADE);
+    this.sol.body.immovable = false;
+    this.sol.body.immovable=true
+    game.physics.arcade.collide(this.sol, Perso1)
+    game.physics.arcade.collide(this.sol, Perso2)
+    
+
+};
+
+
+
+
+
+
+
+var game = new Phaser.Game(1024, 768, Phaser.AUTO, 'content', {
     preload: preload, create: 
         create, update: update
 }); 
@@ -9,13 +35,27 @@ var vitesse = 300;
 var test_desc;
 var aerial1 = 2;
 var aerial2 = 2;
+var sol;
 
 function preload(){ 
     game.load.spritesheet('J1_spr', 'asset/Sprites Joueur1.png', 78, 76);
     game.load.spritesheet('J2_spr', 'asset/Sprites Joueur2.png', 78, 76);
+    game.load.image('sol', 'asset/Sol.png');
 } 
 
 function create() {
+    /*sol = game.add.sprite(-300, -300);
+    sol.anchor.setTo(0.5, 0.5);
+    for (var i = 0; i < 80; i++) 
+    {
+        enemies.push(new sol(i, game, tank, 106*i,946));
+    }*/
+
+
+
+    game.world.setBounds(0, 0, 40000, 768);
+    game.world.resize(3000, 768);
+
     //initialisation du fond
     game.stage.backgroundColor = '#FFF000';
 
@@ -47,23 +87,27 @@ function create() {
     Perso2.animations.add('still_d', [7], 5, true);
     Perso2.animations.add('still_g', [6], 5, true);
 
-    bloc = game.add.sprite(500, 500);
-
-
 
     //allocation du moteur de jeu
     game.physics.enable(Perso1, Phaser.Physics.ARCADE);
     Perso1.body.collideWorldBounds = true;
-    Perso1.body.setSize(30, 56);
+    Perso1.body.setSize(30, 56,24,10);
 
     game.physics.enable(Perso2, Phaser.Physics.ARCADE);
     Perso2.body.collideWorldBounds = true;
-    Perso2.body.setSize(30, 56);
+    Perso2.body.setSize(30, 56,24,10);
+
+    bloc = game.add.sprite(500, 500, 'sol');
+    game.physics.enable(bloc, Phaser.Physics.ARCADE);
+    bloc.body.immovable = true;
+    bloc.body.allowGravity = false;
 } 
 
 function update() {
     //mouvements
-    game.physics.arcade.collide(Perso1,Perso2)
+    game.physics.arcade.collide(Perso1, Perso2)
+    game.physics.arcade.collide(Perso1, bloc)
+    game.physics.arcade.collide(bloc, Perso2)
 
     function move(Perso, joueur, aerial, ae = 1, t1 = 0, t2 = 0) {
         
@@ -98,7 +142,18 @@ function update() {
         }
         return aerial
     }
-    aerial1 = move(Perso1, J1, aerial1);
-    aerial2 = move(Perso2, J2, aerial2);
+
+    function jeu(){
+        aerial1 = move(Perso1, J1, aerial1);
+        aerial2 = move(Perso2, J2, aerial2);
+    }
+
+    jeu()
     //if (Perso1.body.velocity.y < 10)
+    if (Perso1.body.x > Perso2.body.x) {
+        game.camera.x = Perso1.body.x - 700
+    }
+    else {
+        game.camera.x = Perso2.body.x - 700
+    }
 }
