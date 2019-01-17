@@ -12,17 +12,25 @@ var aerial1 = 2;
 var aerial2 = 2;
 
 function preload(){ 
+    //spritesheets
     game.load.spritesheet('J1_spr', 'asset/Sprites Joueur1.png', 78, 76);
     game.load.spritesheet('J2_spr', 'asset/Sprites Joueur2.png', 78, 76);
+    game.load.spritesheet('background', 'asset/Fond-course.png',1024,768);
+
+    //sprites
     game.load.image('sol', 'asset/Sol.png');
     game.load.image('plateforme', 'asset/plateforme.png');
+    game.load.image('plateforme', 'asset/plateforme_pics.png');
     game.load.image('boule_de_feu', 'asset/Objet-BouleFeu.png');
     game.load.image('potion_lenteur', 'asset/Objet-PotionLenteur.png');
     game.load.image('potion_speed', 'asset/Objet-PotionSpeed.png');
     game.load.image('pics', 'asset/Obstacle-pics.png');
     game.load.image('virevoltant', 'asset/Obstacle-Virevoltant.png');
-    game.load.spritesheet('background', 'asset/Fond-course.png',1024,768);
+    game.load.image('pangolin', 'asset/pangolin-vie.png');
+
+    //musiques
     game.load.audio('raceTheme', 'asset/Music/true_race_theme.ogg')
+
 } 
 
 function create() {
@@ -33,10 +41,13 @@ function create() {
 
     //animation de fond
     fond = game.add.sprite(0, 0, "background");
+    pangolin= game.add.sprite(1024-500,81,'pangolin');
+    pangolin.angle-=40;
     fond.animations.add("basic", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], 0.1, true);
 
     //creation des groupes
     groupe_sol = game.add.group();
+    groupe_sol_pics = game.add.group();
     groupe_virevoltants = game.add.group();
     groupe_caisses = game.add.group();
     groupe_pics = game.add.group();
@@ -45,8 +56,11 @@ function create() {
     {
     //layer 1
     for (var i = 0; i < 1000; i++) {
-        if (Math.random() * 100 < 60) {
+        if (Math.random() * 100 < 60 &&i>10 || (8<i && i<16)) {
             s = groupe_sol.create(106 * i, 700, 'sol');
+            if (Math.random() * 100 < 60) {
+                g = groupe_sol.create(106 * i, 693, 'pics');
+            }
             game.physics.enable(s, Phaser.Physics.ARCADE);
             s.body.immovable = true;
             s.body.allowGravity = false;
@@ -55,7 +69,7 @@ function create() {
 
     //layer 2
     for (var i = 0; i < 1000; i++) {
-        if (Math.random() * 100 < 10) {
+        if (Math.random() * 100 < 10 && 8<i) {
             s = groupe_sol.create(106 * i, 540, 'plateforme');
             game.physics.enable(s, Phaser.Physics.ARCADE);
             s.body.immovable = true;
@@ -65,13 +79,9 @@ function create() {
 
     //layer 3
     for (var i = 0; i < 1000; i++) {
-        if (Math.random() * 100 < 4) {
+        if (Math.random() * 100 < 4 && 8<i) {
+            //if Math.random
             s = groupe_sol.create(106 * i, 380, 'plateforme');
-            /*
-            if (Math.random() * 100 <) {
-                g=groupe_pics = 
-            }
-            */
             game.physics.enable(s, Phaser.Physics.ARCADE);
             s.body.immovable = true;
             s.body.allowGravity = false;
@@ -188,10 +198,12 @@ function update() {
 
     if (Perso1.body.x > Perso2.body.x) {
         game.camera.x = Perso1.body.x - 700
+        pangolin.x = Perso1.body.x + 200
         fond.x = Perso1.body.x - 700
     }
     else {
         game.camera.x = Perso2.body.x - 700
+        pangolin.x = Perso2.body.x + 200
         fond.x = Perso2.body.x - 700
     }
 
