@@ -121,11 +121,11 @@ function create() {
 
     //allocation du moteur de jeu
     game.physics.enable(Perso1, Phaser.Physics.ARCADE);
-    Perso1.body.collideWorldBounds = true;
+    Perso1.body.collideWorldBounds = false;
     Perso1.body.setSize(30, 56,24,10);
 
     game.physics.enable(Perso2, Phaser.Physics.ARCADE);
-    Perso2.body.collideWorldBounds = true;
+    Perso2.body.collideWorldBounds = false;
     Perso2.body.setSize(30, 56,24,10);
 
     
@@ -178,8 +178,14 @@ function update() {
     }
 
     jeu()
+
     //if (Perso1.body.velocity.y < 10)
-    
+
+
+    //gestion de caméra
+
+    cam_memory += 4
+
     if (Perso1.body.x > Perso2.body.x) {
         game.camera.x = Perso1.body.x - 700
             cam_memory = game.camera.x;
@@ -189,12 +195,12 @@ function update() {
         cam_memory = game.camera.x;
     }
 
-    //condition de victoire par d�passement
-    if (Perso1.body.x > Perso2.body.x + 730) {
+    //condition de victoire par depassement
+    if (Perso1.body.x > Perso2.body.x + 730 || Perso2.body.y > 770) {
         //joueur 1 gagne
         document.location.href = 'victoireJ1.html'
     }
-    if (Perso2.body.x > Perso1.body.x + 730) {
+    if (Perso2.body.x > Perso1.body.x + 730 || Perso1.body.y>770) {
         //joueur 2 gagne
         document.location.href = 'victoireJ2.html'
     }
