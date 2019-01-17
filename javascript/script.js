@@ -16,6 +16,9 @@ function preload(){
 } 
 
 function create() {
+    //initialisation du fond
+    game.stage.backgroundColor = '#FFF000';
+
     //initialisation des moteurs de jeu
     game.physics.startSystem(Phaser.Physics.ARCADE);
     game.physics.arcade.gravity.y = 700;
@@ -35,7 +38,7 @@ function create() {
     Perso1.animations.add('still_d', [7], 5, true);
     Perso1.animations.add('still_g', [6], 5, true);
 
-    Perso2 = game.add.sprite(0, 200, 'J2_spr');
+    Perso2 = game.add.sprite(60, 200, 'J2_spr');
     Perso2.anchor.setTo(0.5, 0.5);
     Perso2.animations.add('marche_d', [1, 3], 5, true);
     Perso2.animations.add('marche_g', [0, 2], 5, true);
@@ -44,19 +47,26 @@ function create() {
     Perso2.animations.add('still_d', [7], 5, true);
     Perso2.animations.add('still_g', [6], 5, true);
 
+    bloc = game.add.sprite(500, 500);
+
+
+
     //allocation du moteur de jeu
     game.physics.enable(Perso1, Phaser.Physics.ARCADE);
     Perso1.body.collideWorldBounds = true;
+    Perso1.body.setSize(30, 56);
 
     game.physics.enable(Perso2, Phaser.Physics.ARCADE);
     Perso2.body.collideWorldBounds = true;
+    Perso2.body.setSize(30, 56);
 } 
 
 function update() {
     //mouvements
+    game.physics.arcade.collide(Perso1,Perso2)
 
     function move(Perso, joueur, aerial, ae = 1, t1 = 0, t2 = 0) {
-
+        
         t2 = t1
         t1 = Perso.body.velocity.y
         Perso.body.velocity.x *= 0.90;
@@ -83,7 +93,7 @@ function update() {
             Perso.body.velocity.y = -1.3 * vitesse
             aerial-=1
         }
-        if (t1==t2) {
+        if (t1 == t2) {
             aerial = ae
         }
         return aerial
