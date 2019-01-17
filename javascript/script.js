@@ -1,3 +1,10 @@
+function P1win () {
+    document.location.href = 'victoireJ1.html'
+}
+function P2win () {
+    document.location.href = 'victoireJ2.html'
+}
+
 var game = new Phaser.Game(1024, 768, Phaser.AUTO, 'content', {
     preload: preload, create: 
         create, update: update
@@ -10,17 +17,19 @@ var vitesse = 330;
 var test_desc;
 var aerial1 = 2;
 var aerial2 = 2;
+var nb_pla = 200;
 
 function preload(){ 
     //spritesheets
     game.load.spritesheet('J1_spr', 'asset/Sprites Joueur1.png', 78, 76);
     game.load.spritesheet('J2_spr', 'asset/Sprites Joueur2.png', 78, 76);
     game.load.spritesheet('background', 'asset/Fond-course.png',1024,768);
+    game.load.spritesheet('background', 'asset/Fond-course.png',1024,768);
 
     //sprites
     game.load.image('sol', 'asset/Sol.png');
+    game.load.image('sol_pics', 'asset/Sol-pics.png');
     game.load.image('plateforme', 'asset/plateforme.png');
-    game.load.image('plateforme', 'asset/plateforme_pics.png');
     game.load.image('boule_de_feu', 'asset/Objet-BouleFeu.png');
     game.load.image('potion_lenteur', 'asset/Objet-PotionLenteur.png');
     game.load.image('potion_speed', 'asset/Objet-PotionSpeed.png');
@@ -34,6 +43,14 @@ function preload(){
 } 
 
 function create() {
+    groupe_virevoltants = game.add.group();
+    groupe_virevoltants.enableBody = true;
+    groupe_virevoltants.physicsBodyType = Phaser.Physics.ARCADE;
+
+    groupe_virevoltants.createMultiple(50, 'virevoltant');
+    groupe_virevoltants.setAll('checkWorldBounds', true);
+    groupe_virevoltants.setAll('outOfBoundsKill', true);
+
     //mise en route de la musique
     music = game.add.audio('raceTheme');
     music.loop = true;
@@ -47,19 +64,21 @@ function create() {
 
     //creation des groupes
     groupe_sol = game.add.group();
-    groupe_sol_pics = game.add.group();
     groupe_virevoltants = game.add.group();
     groupe_caisses = game.add.group();
-    groupe_pics = game.add.group();
+    groupe_OS = game.add.group();
 
     //creation du monde
     {
     //layer 1
-    for (var i = 0; i < 1000; i++) {
+    for (var i = 0; i < nb_pla; i++) {
         if (Math.random() * 100 < 60 &&i>10 || (8<i && i<16)) {
             s = groupe_sol.create(106 * i, 700, 'sol');
-            if (Math.random() * 100 < 60) {
-                g = groupe_sol.create(106 * i, 693, 'pics');
+            if (Math.random() * 100 < 10) {
+                g = groupe_OS.create(106 * i, 693, 'pics');
+                game.physics.enable(g, Phaser.Physics.ARCADE);
+                g.body.immovable = true;
+                g.body.allowGravity = false;    
             }
             game.physics.enable(s, Phaser.Physics.ARCADE);
             s.body.immovable = true;
@@ -68,7 +87,7 @@ function create() {
     }
 
     //layer 2
-    for (var i = 0; i < 1000; i++) {
+    for (var i = 0; i < nb_pla; i++) {
         if (Math.random() * 100 < 10 && 8<i) {
             s = groupe_sol.create(106 * i, 540, 'plateforme');
             game.physics.enable(s, Phaser.Physics.ARCADE);
@@ -78,7 +97,7 @@ function create() {
     }
 
     //layer 3
-    for (var i = 0; i < 1000; i++) {
+    for (var i = 0; i < nb_pla; i++) {
         if (Math.random() * 100 < 4 && 8<i) {
             //if Math.random
             s = groupe_sol.create(106 * i, 380, 'plateforme');
@@ -88,8 +107,6 @@ function create() {
         }
     }
     }
-
-
     game.world.setBounds(0, 0, 40000, 768);
     game.world.resize(3000, 768);
 
@@ -144,10 +161,21 @@ function update() {
     fond.play('basic');
     
     //mouvements
-    game.physics.arcade.collide(Perso1, Perso2)
 
+    game.physics.arcade.collide(Perso1, Perso2)
     game.physics.arcade.collide(groupe_sol, Perso2)
     game.physics.arcade.collide(groupe_sol, Perso1)
+    
+    if (game.physics.arcade.collide(Perso1,groupe_OS)) {
+        P2win()
+      }
+    if (game.physics.arcade.collide(Perso2,groupe_OS)) {
+        P1win()
+    }
+    /*
+    game.physics.arcade.collide(groupe_OS, Perso1,P2win())
+    game.physics.arcade.collide(groupe_OS, Perso2,P1win())
+    */
 
     function move(Perso, joueur, aerial, ae = 1, t1 = 0, t2 = 0) {
         
@@ -210,10 +238,10 @@ function update() {
     //condition de victoire par depassement
     if (Perso1.body.x > Perso2.body.x + 730 || Perso2.body.y > 770) {
         //joueur 1 gagne
-        document.location.href = 'victoireJ1.html'
+        P1win()
     }
     if (Perso2.body.x > Perso1.body.x + 730 || Perso1.body.y>770) {
         //joueur 2 gagne
-        document.location.href = 'victoireJ2.html'
+        P2win()
     }
 }
