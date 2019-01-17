@@ -189,13 +189,13 @@ function update() {
         cam_memory = game.camera.x;
     }
 
-    //condition de victoire par dépassement
+    //condition de victoire par dï¿½passement
     if (Perso1.body.x > Perso2.body.x + 730) {
         //joueur 1 gagne
-        document.location.href = 'commandes.html'
+        document.location.href = 'victoireJ1.html'
     }
     if (Perso2.body.x > Perso1.body.x + 730) {
         //joueur 2 gagne
-        document.location.href = 'commandes.html'
+        document.location.href = 'victoireJ2.html'
     }
 }
