@@ -10,7 +10,6 @@ var test_desc;
 var aerial1 = 2;
 var aerial2 = 2;
 
-
 function preload(){ 
     game.load.spritesheet('J1_spr', 'asset/Sprites Joueur1.png', 78, 76);
     game.load.spritesheet('J2_spr', 'asset/Sprites Joueur2.png', 78, 76);
@@ -69,8 +68,13 @@ function update() {
             Perso.body.velocity.x -= 0.08 * vitesse
             Perso.play('marche_g');
         }
-        else if (Perso.body.velocity.x) {
-
+        else if (Perso.body.velocity.x < 40 && Perso.body.velocity.x > -40) {
+            if (Perso.body.velocity.x<0) {
+                Perso.play('still_g')
+            }
+            else {
+                Perso.play('still_d')
+            }
         }
         if (joueur.bas.isDown) {
             Perso.body.velocity.y = vitesse
