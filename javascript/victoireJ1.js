@@ -21,6 +21,6 @@ function update(){
     }
 
     if (game.input.keyboard.isDown(Phaser.Keyboard.P)==true){
-        document.location.href='commandes.html'
+        document.location.href='credits.html'
     }
 }
