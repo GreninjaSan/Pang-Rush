@@ -29,9 +29,10 @@ var game = new Phaser.Game(1024, 768, Phaser.AUTO, 'content', {
         create, update: update
 }); 
 var cursors;
+var cam_memory=0;
 var J1;
 var J2;
-var vitesse = 300;
+var vitesse = 330;
 var test_desc;
 var aerial1 = 2;
 var aerial2 = 2;
@@ -40,11 +41,17 @@ function preload(){
     game.load.spritesheet('J1_spr', 'asset/Sprites Joueur1.png', 78, 76);
     game.load.spritesheet('J2_spr', 'asset/Sprites Joueur2.png', 78, 76);
     game.load.image('sol', 'asset/Sol.png');
+    game.load.image('plateforme', 'asset/plateforme.png');
+    game.load.image('boule_de_feu', 'asset/Objet-BouleFeu.png');
+    game.load.image('potion_lenteur', 'asset/Objet-PotionLenteur.png');
+    game.load.image('potion_speed', 'asset/Objet-PotionSpeed.png');
+    game.load.image('pics', 'asset/Obstacle-pics.png');
+    game.load.image('virevoltant', 'asset/Obstacle-Virevoltant.png');
 } 
 
 function create() {
     groupe_sol = game.add.group();
-
+    boules_de_feu = game.add.group();
 
     //layer 1
     for (var i = 0; i < 1000; i++) {
@@ -59,7 +66,7 @@ function create() {
     //layer 2
     for (var i = 0; i < 1000; i++) {
         if (Math.random() * 100 > 70) {
-            s = groupe_sol.create(106 * i, 500, 'sol');
+            s = groupe_sol.create(106 * i, 540, 'plateforme');
             game.physics.enable(s, Phaser.Physics.ARCADE);
             s.body.immovable = true;
             s.body.allowGravity = false;
@@ -69,7 +76,7 @@ function create() {
     //layer 3
     for (var i = 0; i < 1000; i++) {
         if (Math.random() * 100 > 90) {
-            s = groupe_sol.create(106 * i, 300, 'sol');
+            s = groupe_sol.create(106 * i, 380, 'plateforme');
             game.physics.enable(s, Phaser.Physics.ARCADE);
             s.body.immovable = true;
             s.body.allowGravity = false;
@@ -92,7 +99,7 @@ function create() {
     cursors = game.input.keyboard.createCursorKeys();
 
     //assignement des sprites
-    Perso1 = game.add.sprite(0, 200, 'J1_spr');
+    Perso1 = game.add.sprite(200, 100, 'J1_spr');
     Perso1.anchor.setTo(0.5, 0.5);
     Perso1.animations.add('marche_d', [1,3], 5, true);
     Perso1.animations.add('marche_g', [0, 2], 5, true);
@@ -100,8 +107,8 @@ function create() {
     Perso1.animations.add('acc_d', [9], 5, true);
     Perso1.animations.add('still_d', [7], 5, true);
     Perso1.animations.add('still_g', [6], 5, true);
-
-    Perso2 = game.add.sprite(60, 200, 'J2_spr');
+    
+    Perso2 = game.add.sprite(200, 200, 'J2_spr');
     Perso2.anchor.setTo(0.5, 0.5);
     Perso2.animations.add('marche_d', [1, 3], 5, true);
     Perso2.animations.add('marche_g', [0, 2], 5, true);
@@ -120,17 +127,12 @@ function create() {
     Perso2.body.collideWorldBounds = true;
     Perso2.body.setSize(30, 56,24,10);
 
-    bloc = game.add.sprite(500, 500, 'sol');
-    game.physics.enable(bloc, Phaser.Physics.ARCADE);
-    bloc.body.immovable = true;
-    bloc.body.allowGravity = false;
+    
 } 
 
 function update() {
     //mouvements
     game.physics.arcade.collide(Perso1, Perso2)
-    game.physics.arcade.collide(Perso1, bloc)
-    game.physics.arcade.collide(bloc, Perso2)
 
     game.physics.arcade.collide(groupe_sol, Perso2)
     game.physics.arcade.collide(groupe_sol, Perso1)
@@ -176,10 +178,14 @@ function update() {
 
     jeu()
     //if (Perso1.body.velocity.y < 10)
+    
     if (Perso1.body.x > Perso2.body.x) {
         game.camera.x = Perso1.body.x - 700
+            cam_memory = game.camera.x;
     }
     else {
         game.camera.x = Perso2.body.x - 700
+        cam_memory = game.camera.x;
     }
+    
 }
