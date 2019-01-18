@@ -1,7 +1,7 @@
 function tir (obj){
     obj.body.x=pangolin.x+83
     obj.body.y=pangolin.y+128
-    obj.body.velocity.y=0
+    obj.body.velocity.y=-10
     obj.body.velocity.x=-40
 }
 function tirFB (obj,i){
@@ -46,19 +46,33 @@ var game = new Phaser.Game(1024, 768, Phaser.AUTO, 'content', {
     preload: preload, create:
         create, update: update
 }); 
+
+var timer1 =0;
+var timer2 =0;
 var nextFire = 0;
 var fireRate = 100;
 var cursors;
 var cam_memory=0;
 var J1;
 var J2;
-var vitesse = 330;
+var vitesseJ1 = 330;
+var vitesseJ2 = 330;
 var test_desc;
 var aerial1 = 2;
 var aerial2 = 2;
 var nb_pla = 200;
 var z=0;
-var count =3;
+var count =0;
+
+
+
+
+var duréePot = 600;
+
+
+
+
+
 
 function preload(){ 
     //spritesheets
@@ -95,6 +109,15 @@ function create() {
     fond = game.add.sprite(0, 0, "background");
     fond.animations.add("basic", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], 0.1, true);
 
+
+    
+    potionS=game.add.sprite(0,0,'potion_speed');
+    game.physics.enable(potionS, Phaser.Physics.ARCADE);
+    potionS.body.bounce.set(0.4);
+    potionS.body.allowGravity = true;
+
+
+
     pangolin= game.add.sprite(1024-530,-20,'pangolin');
     pangolin.animations.add("voler",[0,1,2,3,4,5],6,true);
 
@@ -107,7 +130,6 @@ function create() {
     game.physics.enable(virevol2, Phaser.Physics.ARCADE);
     virevol2.body.bounce.set(0.8);
     virevol2.body.allowGravity = true;
-    virevol2.body.immovable = true;
 
     virevol3 = game.add.sprite(100,100,'virevoltant');
     game.physics.enable(virevol3, Phaser.Physics.ARCADE);
@@ -252,20 +274,24 @@ function create() {
 
 
 function update() {
+    timer2--
+    timer1--
     z++
     if (z>300){
         if (count<3) {
             tir ([virevol,virevol2,virevol3][count])
         }
-        else {
+        else if (count==3) {
             tirFB(fireball,1)
             tirFB(fireball2,2)
             tirFB(fireball3,3)
         }
-
+        else {
+            tir(potionS)
+        }
         z=0
         count++
-        if (count>3) {
+        if (count>4) {
             count=0;
         }
     }
@@ -282,6 +308,7 @@ function update() {
     game.physics.arcade.collide(groupe_sol, virevol)
     game.physics.arcade.collide(groupe_sol, virevol2)
     game.physics.arcade.collide(groupe_sol, virevol3)
+    game.physics.arcade.collide(groupe_sol, potionS)
 
     //projectiles
     {
@@ -344,19 +371,36 @@ function update() {
       if (game.physics.arcade.collide(Perso1,fireball3)) {
         P2win()
       }
+
+
+      if (game.physics.arcade.collide(Perso1,potionS)) {
+        timer1 = duréePot
+        potionS.x=0
+      }
+      if (game.physics.arcade.collide(Perso2,potionS)) {
+        timer2 = duréePot
+        potionS.x=0
+      }
+
+
     }
 
-    function move(Perso, joueur, aerial, ae = 1, t1 = 0, t2 = 0) {
-        
+    function move(Perso, joueur, aerial, vitesse, timer, ae = 1, t1 = 0, t2 = 0) {
+        if (timer<0) {
+            speed = vitesse
+        }
+        else {
+            speed = 1.3*vitesse
+        }
         t2 = t1
         t1 = Perso.body.velocity.y
         Perso.body.velocity.x *= 0.90;
         if (joueur.droite.isDown) {
-            Perso.body.velocity.x += 0.08 * vitesse
+            Perso.body.velocity.x += 0.08 * speed
             Perso.play('marche_d');
         }
         else if (joueur.gauche.isDown) {
-            Perso.body.velocity.x -= 0.08 * vitesse
+            Perso.body.velocity.x -= 0.08 * speed
             Perso.play('marche_g');
         }
         else if (Perso.body.velocity.x < 40 && Perso.body.velocity.x > -40) {
@@ -368,10 +412,10 @@ function update() {
             }
         }
         if (joueur.bas.isDown) {
-            Perso.body.velocity.y = vitesse
+            Perso.body.velocity.y = speed
         }
         if (aerial > 0 && joueur.haut.isDown && Perso.body.velocity.y >= -50) {
-            Perso.body.velocity.y = -1.3 * vitesse
+            Perso.body.velocity.y = -1.3 * speed
             aerial-=1
         }
         if (t1 == t2) {
@@ -381,8 +425,8 @@ function update() {
     }
 
     function jeu(){
-        aerial1 = move(Perso1, J1, aerial1);
-        aerial2 = move(Perso2, J2, aerial2);
+        aerial1 = move(Perso1, J1, aerial1,vitesseJ1,timer1);
+        aerial2 = move(Perso2, J2, aerial2,vitesseJ2,timer2);
     }
 
     jeu()
