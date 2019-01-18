@@ -62,7 +62,7 @@ var aerial1 = 2;
 var aerial2 = 2;
 var nb_pla = 200;
 var z=0;
-var count =3;
+var count =0;
 
 
 
