@@ -1,7 +1,7 @@
 function tir (obj){
     obj.body.x=pangolin.x+83
     obj.body.y=pangolin.y+128
-    obj.body.velocity.y=-1
+    obj.body.velocity.y=-10
     obj.body.velocity.x=-40
 }
 function tirFB (obj,i){
