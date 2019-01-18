@@ -4,6 +4,12 @@ function tir (obj){
     obj.body.velocity.y=0
     obj.body.velocity.x=-40
 }
+function tirFB (obj,i){
+    obj.body.x=pangolin.x+63
+    obj.body.y=pangolin.y+88
+    obj.body.velocity.y=300
+    obj.body.velocity.x=40-(80*i)
+}
 
 function P1win () {
     document.location.href = 'victoireJ1.html'
@@ -52,7 +58,7 @@ var aerial1 = 2;
 var aerial2 = 2;
 var nb_pla = 200;
 var z=0;
-var count =0;
+var count =3;
 
 function preload(){ 
     //spritesheets
@@ -60,9 +66,10 @@ function preload(){
     game.load.spritesheet('J2_spr', 'asset/Sprites Joueur2.png', 78, 76);
     game.load.spritesheet('background', 'asset/Fond-course.png',1024,768);
     game.load.spritesheet('pangolin', 'asset/pangolin-mechant.png',166,256);
-    game.load.spritesheet('caisse_feu', 'asset/Obstacle-CaisseFeu.png',32,32);
+    
 
     //sprites
+    game.load.image('caisse_feu', 'asset/Obstacle-CaisseFeu.png',32,32);
     game.load.image('sol', 'asset/Sol.png');
     game.load.image('sol_pics', 'asset/Sol-pics.png');
     game.load.image('plateforme', 'asset/plateforme.png');
@@ -91,23 +98,39 @@ function create() {
     pangolin= game.add.sprite(1024-530,-20,'pangolin');
     pangolin.animations.add("voler",[0,1,2,3,4,5],6,true);
 
-    virevol = game.add.sprite(1000,100,'virevoltant');
+    virevol = game.add.sprite(100,100,'virevoltant');
     game.physics.enable(virevol, Phaser.Physics.ARCADE);
     virevol.body.bounce.set(0.8);
     virevol.body.allowGravity = true;
 
-    virevol2 = game.add.sprite(1000,100,'virevoltant');
+    virevol2 = game.add.sprite(100,100,'virevoltant');
     game.physics.enable(virevol2, Phaser.Physics.ARCADE);
     virevol2.body.bounce.set(0.8);
     virevol2.body.allowGravity = true;
     virevol2.body.immovable = true;
 
-    virevol3 = game.add.sprite(1000,100,'virevoltant');
+    virevol3 = game.add.sprite(100,100,'virevoltant');
     game.physics.enable(virevol3, Phaser.Physics.ARCADE);
     virevol3.body.bounce.set(0.8);
     virevol3.body.allowGravity = true;
 
-    
+
+
+
+    fireball = game.add.sprite(100,100,'boule_de_feu');
+    game.physics.enable(fireball, Phaser.Physics.ARCADE);
+    fireball.body.allowGravity = false;
+    fireball.scale.setTo(0.5, 0.5);
+
+    fireball2 = game.add.sprite(100,100,'boule_de_feu');
+    game.physics.enable(fireball2, Phaser.Physics.ARCADE);
+    fireball2.body.allowGravity = false;
+    fireball2.scale.setTo(0.5, 0.5);
+
+    fireball3 = game.add.sprite(100,100,'boule_de_feu');
+    game.physics.enable(fireball3, Phaser.Physics.ARCADE);
+    fireball3.body.allowGravity = false;
+    fireball3.scale.setTo(0.5, 0.5);
 
 
     /*
@@ -133,15 +156,16 @@ function create() {
     for (var i = 0; i < nb_pla; i++) {
         if (Math.random() * 100 < 60 &&i>10 || (8<i && i<16)) {
             s = groupe_sol.create(106 * i, 700, 'sol');
-            if (Math.random() * 100 < 10) {
-                if Math.random() * 100 < 50) {
+            if (Math.random() * 100 < 20) {
+                if (Math.random() * 100 < 50) {
                     g = groupe_OS.create(106 * i, 693, 'pics');
                     game.physics.enable(g, Phaser.Physics.ARCADE);
                     g.body.immovable = true;
                     g.body.allowGravity = false;
                 }
                 else {
-                    g = groupe_OS.create(106 * i, 668, 'caisse_feu'[0]);
+                    g = groupe_OS.create(106 * i, 639, 'caisse_feu');
+                    g.scale.setTo(2, 2);
                     game.physics.enable(g, Phaser.Physics.ARCADE);
                     g.body.immovable = true;
                     g.body.allowGravity = false;
@@ -230,10 +254,18 @@ function create() {
 function update() {
     z++
     if (z>300){
-        tir ([virevol,virevol2,virevol3][count])
+        if (count<3) {
+            tir ([virevol,virevol2,virevol3][count])
+        }
+        else {
+            tirFB(fireball,1)
+            tirFB(fireball2,2)
+            tirFB(fireball3,3)
+        }
+
         z=0
         count++
-        if (count>2) {
+        if (count>3) {
             count=0;
         }
     }
@@ -251,6 +283,8 @@ function update() {
     game.physics.arcade.collide(groupe_sol, virevol2)
     game.physics.arcade.collide(groupe_sol, virevol3)
 
+    //projectiles
+    {
     if (game.physics.arcade.collide(Perso1,groupe_OS)) {
         P2win()
       }
@@ -288,6 +322,29 @@ function update() {
         virevol3.x=0
         virevol3.y=0
       }
+
+
+
+      if (game.physics.arcade.collide(Perso2,fireball)) {
+        P1win()
+      }
+      if (game.physics.arcade.collide(Perso2,fireball2)) {
+        P1win()
+      }
+      if (game.physics.arcade.collide(Perso2,fireball3)) {
+        P1win()
+      }
+
+      if (game.physics.arcade.collide(Perso1,fireball)) {
+        P2win()
+      }
+      if (game.physics.arcade.collide(Perso1,fireball2)) {
+        P2win()
+      }
+      if (game.physics.arcade.collide(Perso1,fireball3)) {
+        P2win()
+      }
+    }
 
     function move(Perso, joueur, aerial, ae = 1, t1 = 0, t2 = 0) {
         
